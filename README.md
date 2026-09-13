@@ -1,58 +1,81 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# BackVibeCoding
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+REST API for a course marketplace, built with Laravel + Sanctum. Users can list courses, like and purchase them. Frontend counterpart: [Frontvibecoding](https://github.com/yourname/Frontvibecoding-).
 
-## About Laravel
+## Stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- PHP 8.3, Laravel 13
+- Sanctum (token auth)
+- Eloquent + migrations, feature tests with Sanctum + fake storage
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## What's implemented
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**Auth**
+- Register / login / logout with Sanctum tokens
+- `/profile` returns the current user + role
 
-## Learning Laravel
+**Courses**
+- Create a course with a required image upload (stored on the `public` disk)
+- List courses with `likes_count`, `liked_by_current_user` and `purchased_by_current_user` computed per request via `withCount`/`withExists` (no N+1)
+- Delete — only the author can delete their own course, enforced through a real `CoursePolicy` (`Gate::authorize('delete', $course)`)
+- Like / unlike (`course_likes` pivot)
+- Purchase (`course_purchases` pivot) — currently just records the purchase, no payment integration
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+**Roles**
+`User` has `role` (`user`/`moder`/`admin`/`superadmin`) and helper methods (`isAdmin()`, `isModer()`, etc.), but there's no admin panel or route using them yet — the groundwork is there for moderation features, not wired up.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Structure
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```
+app/
+├── Http/
+│   ├── Controllers/   # UserController, CourseController
+│   └── Requests/      # RegisterRequest, LoginRequest, CourseRequest
+├── Models/             # User, Course
+└── Policies/            # CoursePolicy
+routes/api.php
+database/migrations/
+tests/Feature/CourseApiTest.php
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Endpoints
 
-## Contributing
+```
+POST   /api/register
+POST   /api/login
+POST   /api/logout                (auth)
+GET    /api/profile               (auth)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+GET    /api/courses               (auth)
+POST   /api/courses               (auth)
+DELETE /api/courses/{id}          (auth, owner only)
+POST   /api/courses/{id}/like     (auth)
+DELETE /api/courses/{id}/like     (auth)
+POST   /api/courses/{id}/purchase (auth)
+```
 
-## Code of Conduct
+## Setup
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+php artisan serve
+```
 
-## Security Vulnerabilities
+Runs on `http://127.0.0.1:8000`.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Tests
 
-## License
+```bash
+php artisan test
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Covers course creation/listing (including image validation and storage) and the author-only delete rule.
+
+## Known gaps
+
+- no pagination on `GET /api/courses`
+- role fields exist but nothing actually restricts anything by role yet
+- purchase is a plain DB record, no real payment flow
