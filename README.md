@@ -1,6 +1,6 @@
 # BackVibeCoding
 
-REST API for a course marketplace, built with Laravel + Sanctum. Users can list courses, like and purchase them. Frontend counterpart: [Frontvibecoding](https://github.com/yourname/Frontvibecoding-).
+REST API for a course marketplace, built with Laravel + Sanctum. Users can list courses, like and purchase them. Frontend counterpart: [Frontvibecoding](https://github.com/artushhhd/Frontvibecoding-).
 
 ## Stack
 
