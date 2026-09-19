@@ -2,6 +2,7 @@
 
 > Previous version of the Course Platform API.  
 > The actively maintained version is now available in **[junior-backend-api](https://github.com/artushhhd/junior-backend-api)**.
+> frontend  **[frontendVibeCoding](https://github.com/artushhhd/Frontvibecoding)**
 
 This repository contains the earlier backend implementation of a course marketplace built with Laravel and Sanctum. It is preserved as part of the project's development history.
 
