@@ -1,62 +1,122 @@
 # BackVibeCoding
 
-REST API for a course marketplace, built with Laravel + Sanctum. Users can list courses, like and purchase them. Frontend counterpart: [Frontvibecoding](https://github.com/artushhhd/Frontvibecoding-).
+> Previous version of the Course Platform API.  
+> The actively maintained version is now available in **[junior-backend-api](https://github.com/artushhhd/junior-backend-api)**.
 
-## Stack
+This repository contains the earlier backend implementation of a course marketplace built with Laravel and Sanctum. It is preserved as part of the project's development history.
 
-- PHP 8.3, Laravel 13
-- Sanctum (token auth)
-- Eloquent + migrations, feature tests with Sanctum + fake storage
+## Project Overview
 
-## What's implemented
+The API provides the core backend functionality for a course marketplace:
 
-**Auth**
-- Register / login / logout with Sanctum tokens
-- `/profile` returns the current user + role
+- User registration and authentication
+- Course management
+- Image uploads
+- Course likes
+- Course purchases
+- Ownership-based authorization
+- API feature tests
 
-**Courses**
-- Create a course with a required image upload (stored on the `public` disk)
-- List courses with `likes_count`, `liked_by_current_user` and `purchased_by_current_user` computed per request via `withCount`/`withExists` (no N+1)
-- Delete — only the author can delete their own course, enforced through a real `CoursePolicy` (`Gate::authorize('delete', $course)`)
-- Like / unlike (`course_likes` pivot)
-- Purchase (`course_purchases` pivot) — currently just records the purchase, no payment integration
+The current version extends this foundation with a broader authorization system, administration and moderation features.
 
-**Roles**
-`User` has `role` (`user`/`moder`/`admin`/`superadmin`) and helper methods (`isAdmin()`, `isModer()`, etc.), but there's no admin panel or route using them yet — the groundwork is there for moderation features, not wired up.
+## Tech Stack
 
-## Structure
+| Technology | Purpose |
+|---|---|
+| PHP 8.3 | Backend language |
+| Laravel 13 | REST API framework |
+| Laravel Sanctum | Token authentication |
+| Eloquent ORM | Database access |
+| MySQL / SQLite | Database |
+| PHPUnit | Feature testing |
 
-```
-app/
-├── Http/
-│   ├── Controllers/   # UserController, CourseController
-│   └── Requests/      # RegisterRequest, LoginRequest, CourseRequest
-├── Models/             # User, Course
-└── Policies/            # CoursePolicy
-routes/api.php
-database/migrations/
-tests/Feature/CourseApiTest.php
-```
+## Implemented Features
 
-## Endpoints
+### Authentication
 
-```
+- Registration
+- Login
+- Logout
+- Sanctum bearer tokens
+- Authenticated profile endpoint
+
+### Courses
+
+- Create courses with image uploads
+- List courses
+- Delete courses with ownership authorization
+- Like / unlike courses
+- Record course purchases
+
+The course listing uses Eloquent relationship aggregates such as `withCount` and `withExists` to avoid unnecessary N+1 queries for like and purchase state.
+
+### Authorization
+
+Course deletion is protected through Laravel's authorization layer and `CoursePolicy`.
+
+The application also contains the foundation for multiple user roles:
+
+- `user`
+- `moder`
+- `admin`
+- `superadmin`
+
+In this previous version, role-based administration was not yet connected to administrative routes.
+
+## API Overview
+
+```text
 POST   /api/register
 POST   /api/login
-POST   /api/logout                (auth)
-GET    /api/profile               (auth)
+POST   /api/logout
+GET    /api/profile
 
-GET    /api/courses               (auth)
-POST   /api/courses               (auth)
-DELETE /api/courses/{id}          (auth, owner only)
-POST   /api/courses/{id}/like     (auth)
-DELETE /api/courses/{id}/like     (auth)
-POST   /api/courses/{id}/purchase (auth)
+GET    /api/courses
+POST   /api/courses
+DELETE /api/courses/{id}
+
+POST   /api/courses/{id}/like
+DELETE /api/courses/{id}/like
+POST   /api/courses/{id}/purchase
 ```
 
-## Setup
+## Project Structure
+
+```text
+app/
+├── Http/
+│   ├── Controllers/
+│   └── Requests/
+├── Models/
+└── Policies/
+
+routes/
+└── api.php
+
+database/
+└── migrations/
+
+tests/
+└── Feature/
+    └── CourseApiTest.php
+```
+
+## Testing
+
+Run the test suite with:
 
 ```bash
+php artisan test
+```
+
+The tests cover course creation and validation, image storage, course listing and ownership-based deletion.
+
+## Installation
+
+```bash
+git clone https://github.com/artushhhd/BackVibeCoding.git
+cd BackVibeCoding
+
 composer install
 cp .env.example .env
 php artisan key:generate
@@ -64,18 +124,22 @@ php artisan migrate
 php artisan serve
 ```
 
-Runs on `http://127.0.0.1:8000`.
+The API runs by default at:
 
-## Tests
-
-```bash
-php artisan test
+```text
+http://127.0.0.1:8000
 ```
 
-Covers course creation/listing (including image validation and storage) and the author-only delete rule.
+## Current Version
 
-## Known gaps
+For the latest implementation, including expanded authorization, administration, moderation and the current API architecture, see:
 
-- no pagination on `GET /api/courses`
-- role fields exist but nothing actually restricts anything by role yet
-- purchase is a plain DB record, no real payment flow
+**[junior-backend-api](https://github.com/artushhhd/junior-backend-api)**
+
+The corresponding frontend is:
+
+**[junior-frontend-app](https://github.com/artushhhd/junior-frontend-app)**
+
+## Project History
+
+This repository represents an earlier stage of the project and is intentionally preserved to show how the application evolved from a smaller course API into a more complete full-stack system.
