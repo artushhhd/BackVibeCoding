@@ -1,41 +1,27 @@
 # BackVibeCoding
 
-> Archived: previous version of the Course Platform API.
+> Archived project history — not the maintained Course Platform backend.
 
-This repository is kept as project history. It is not the current implementation.
+This repository is intentionally kept as an earlier development stage and is not a primary portfolio project.
 
-## About
+## Earlier Implementation
 
-BackVibeCoding is an earlier Laravel API for a course marketplace. It contains the initial implementation of:
-
-- Authentication with Laravel Sanctum
+- Laravel Sanctum authentication
 - Course CRUD
 - Image uploads
 - Likes and purchases
 - Ownership-based authorization
 - Feature tests
 
-The project later evolved into the current Course Platform implementation with broader authorization, administration, moderation, and a more complete API structure.
+The project later evolved into a broader backend with RBAC, moderation, administration, media handling, and expanded API workflows.
 
-## Tech Stack
+## Status
 
-- PHP 8.3
-- Laravel 13
-- Laravel Sanctum
-- Eloquent ORM
-- MySQL / SQLite
-- PHPUnit
+**Archived.**
 
-## Current Version
+For current development and portfolio review:
 
-The maintained version is:
+- **Backend:** https://github.com/artushhhd/course-platform-backend
+- **Frontend:** https://github.com/artushhhd/course-platform-frontend
 
-**Backend:** https://github.com/artushhhd/course-platform-backend
-
-**Frontend:** https://github.com/artushhhd/course-platform-frontend
-
-Use the current repositories for portfolio review and development.
-
-## Project History
-
-This repository is intentionally preserved as an earlier development stage. It demonstrates the progression from a smaller course API to the current full-stack application.
+Keeping this repository separate makes the project history visible without presenting an outdated implementation as current.
