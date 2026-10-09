@@ -1,6 +1,6 @@
 # BackVibeCoding
 
-> **Archived — development history**
+> **Legacy implementation — development history**
 
 Earlier Laravel backend implementation that preceded the current Course Platform API.
 
